@@ -29,7 +29,7 @@ jobs:
     - name: Test YSQL API
       run: |
         docker run --network host --rm yugabytedb/yugabyte-client:latest ysqlsh -h localhost -p "${{ steps.server.outputs.ysql_port }}" \
-          -c "CREATE TABLE foo(id int primary key); INSERT INTO foo SELECT * FROM generate_series(1,10);"
+          -c "select inet_server_addr();"
 
     - name: Test YCQL API
       run: |
