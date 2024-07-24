@@ -26,8 +26,21 @@ jobs:
         echo "YSQL Port: ${{ steps.server.outputs.ysql_port }}"
         echo "YCQL Port: ${{ steps.server.outputs.ycql_port }}"
 
+    - name: Test YB Master UI
+      run: |
+          netstat -tlnp || echo "no netstat"
+          curl --head "http://localhost:${{ steps.server.outputs.yb_master_ui_port }}"
+
+    - name: Test YB Tserver UI
+      run: curl --head "http://localhost:${{ steps.server.outputs.yb_tserver_ui_port }}"
+      
     - name: Test YSQL API
       run: |
+        netstat -tlnp || echo "no netstat"
+        echo "ysqlsh in container"
+        docker exec ${{ steps.server.outputs.container_id }} ysqlsh -h localhost -p "${{ steps.server.outputs.ysql_port }}" \
+          -c "select inet_server_addr();"
+        echo "ysqlsh on host"
         docker run --network host --rm yugabytedb/yugabyte-client:latest ysqlsh -h localhost -p "${{ steps.server.outputs.ysql_port }}" \
           -c "select inet_server_addr();"
 
@@ -36,11 +49,7 @@ jobs:
         docker run --network host --rm yugabytedb/yugabyte-client:latest ycqlsh localhost "${{ steps.server.outputs.ycql_port }}" \
           --execute 'create keyspace foo; create table foo.bar(id int primary key); insert into foo.bar (id) values (1);'
 
-    - name: Test YB Master UI
-      run: curl --head "http://localhost:${{ steps.server.outputs.yb_master_ui_port }}"
 
-    - name: Test YB Tserver UI
-      run: curl --head "http://localhost:${{ steps.server.outputs.yb_tserver_ui_port }}"
 
   test-env-var:
     runs-on: ubuntu-latest
