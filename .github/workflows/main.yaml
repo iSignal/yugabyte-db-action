@@ -29,24 +29,24 @@ jobs:
     - name: Test YB Master UI
       run: |
           netstat -tlnp || echo "no netstat"
-          curl --head "http://localhost:${{ steps.server.outputs.yb_master_ui_port }}"
+          curl --head "http://127.0.0.1:${{ steps.server.outputs.yb_master_ui_port }}"
 
     - name: Test YB Tserver UI
-      run: curl --head "http://localhost:${{ steps.server.outputs.yb_tserver_ui_port }}"
+      run: curl --head "http://127.0.0.1:${{ steps.server.outputs.yb_tserver_ui_port }}"
       
     - name: Test YSQL API
       run: |
         netstat -tlnp || echo "no netstat"
         echo "ysqlsh in container"
-        docker exec ${{ steps.server.outputs.container_id }} ysqlsh -h localhost -p "${{ steps.server.outputs.ysql_port }}" \
+        docker exec ${{ steps.server.outputs.container_id }} ysqlsh -h 127.0.0.1 -p "${{ steps.server.outputs.ysql_port }}" \
           -c "select inet_server_addr();"
         echo "ysqlsh on host"
-        docker run --network host --rm yugabytedb/yugabyte-client:latest ysqlsh -h localhost -p "${{ steps.server.outputs.ysql_port }}" \
+        docker run --network host --rm yugabytedb/yugabyte-client:latest ysqlsh -h 127.0.0.1 -p "${{ steps.server.outputs.ysql_port }}" \
           -c "select inet_server_addr();"
 
     - name: Test YCQL API
       run: |
-        docker run --network host --rm yugabytedb/yugabyte-client:latest ycqlsh localhost "${{ steps.server.outputs.ycql_port }}" \
+        docker run --network host --rm yugabytedb/yugabyte-client:latest ycqlsh 127.0.0.1 "${{ steps.server.outputs.ycql_port }}" \
           --execute 'create keyspace foo; create table foo.bar(id int primary key); insert into foo.bar (id) values (1);'
 
 
