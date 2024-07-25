@@ -17,8 +17,7 @@ jobs:
     - name: Setup yugabyte-db action
       id: server
       uses: ./
-      with:
-         yb_image_tag: 2.3.2.0-b37
+
 
     - name: Print output variables
       run: |
