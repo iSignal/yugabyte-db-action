@@ -33,6 +33,7 @@ jobs:
           netstat -tlnp || echo "no netstat"
           ifconfig || echo "no ifconfig"
           docker ps -a || echo "docker ps failed"
+          docker version || echo "docker version"
           docker inspect ${{ steps.server.outputs.container_id }} || echo "docker inspect failed"
           curl --head "http://127.0.0.1:${{ steps.server.outputs.yb_master_ui_port }}"
 
