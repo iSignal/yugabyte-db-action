@@ -29,7 +29,7 @@ SERVICE_ID=$(docker run \
   --daemon=false --ui=false)
 
 function waitUntilHealthy() {
-  while ! docker exec "$1" ysqlsh -U "${INPUT_YSQL_USER}" -p "$2" -c \\conninfo; do
+  while ! docker exec "$1" ysqlsh -U "${INPUT_YSQL_USER}" -p "$2" -h "$1" -c \\conninfo; do
     sleep 5s
   done
 }
