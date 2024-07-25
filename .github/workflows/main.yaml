@@ -27,8 +27,7 @@ jobs:
         echo "YCQL Port: ${{ steps.server.outputs.ycql_port }}"
 
     - name: Test YB Master UI
-      run: |
-          curl --head "http://localhost:${{ steps.server.outputs.yb_master_ui_port }}"
+      run: curl --head "http://localhost:${{ steps.server.outputs.yb_master_ui_port }}"
 
     - name: Test YB Tserver UI
       run: curl --head "http://localhost:${{ steps.server.outputs.yb_tserver_ui_port }}"
@@ -44,7 +43,6 @@ jobs:
           --execute 'create keyspace foo; create table foo.bar(id int primary key); insert into foo.bar (id) values (1);'
 
 
-
   test-env-var:
     runs-on: ubuntu-latest
     steps:
@@ -55,7 +53,6 @@ jobs:
       id: server
       uses: ./
       with:
-        yb_image_tag: 2.3.2.0-b37
         ysql_user: testsqluser
         ysql_password: testsqlpass
         ysql_db: testdb
